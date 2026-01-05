@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  # 应用服务名称
+  training-system:
+    # 构建配置：使用当前目录 (.) 下的 Dockerfile
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    
+    # 容器名称
+    container_name: training-system-container
+    
+    # 重启策略：总是重启（保证服务稳定性）
+    restart: always
+    
+    # 端口映射：主机端口:容器端口
+    # 访问 http://localhost:8080 即可看到应用
+    ports:
+      - "8080:80"
+    
+    # 挂载配置 (可选)：允许在不重建镜像的情况下修改 Nginx 配置
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
