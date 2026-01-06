@@ -47,7 +47,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // For Demo/Dev purpose
     const sessionUser = mockUser || {
       id: "demo-user-001",
-      name: "邹锋静", // Default to the main persona of the system
+      name: "演示用户", // Default placeholder
       token: "demo-token"
     };
     setUser(sessionUser);

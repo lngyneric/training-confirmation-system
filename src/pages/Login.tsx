@@ -104,25 +104,24 @@ export default function Login() {
             <TabsContent value="demo">
               <div className="space-y-4 py-4">
                 <div className="space-y-2">
-                  <Label>学员姓名</Label>
+                  <Label htmlFor="name">姓名</Label>
                   <Input 
-                    value={demoName} 
-                    onChange={(e) => setDemoName(e.target.value)} 
-                    placeholder="请输入姓名"
+                    id="name" 
+                    placeholder="请输入您的姓名" 
+                    value={demoName}
+                    onChange={(e) => setDemoName(e.target.value)}
                   />
-                </div>
-                <div className="space-y-2">
-                  <Label>演示说明</Label>
-                  <div className="text-sm text-muted-foreground bg-slate-100 p-3 rounded">
-                    此模式用于快速预览系统功能。无需真实验证，点击登录即可进入系统。
-                  </div>
                 </div>
                 <Button 
                   className="w-full" 
-                  onClick={() => login({ id: "demo", name: demoName })}
+                  onClick={() => login({ id: `user-${Date.now()}`, name: demoName })}
+                  disabled={!demoName.trim()}
                 >
                   进入系统
                 </Button>
+                <div className="text-xs text-center text-muted-foreground mt-4">
+                  <p>演示模式：无需密码，输入姓名即可体验</p>
+                </div>
               </div>
             </TabsContent>
           </Tabs>
