@@ -45,13 +45,11 @@ export function TrainingDimensionsChart({
       <CardContent className="flex-1 pb-0 p-0">
         <div className="h-[250px] w-full">
             <ResponsiveContainer width="100%" height="100%">
-            <RadarChart cx="50%" cy="80%" outerRadius="70%" data={chartData}>
+            <RadarChart cx="50%" cy="80%" outerRadius="70%" data={chartData} startAngle={180} endAngle={0}>
                 <PolarGrid stroke="rgba(255,255,255,0.3)" gridType="circle" />
                 <PolarAngleAxis 
                   dataKey="subject" 
                   tick={{ fill: 'white', fontSize: 12 }} 
-                  startAngle={180}
-                  endAngle={0}
                 />
                 <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
                 <Radar

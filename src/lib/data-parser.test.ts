@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { exportToCSV, parseCSV, parseTasks, Task, RawTaskRow } from './data-parser';
+import { exportToCSV, parseCSV, parseTasks, type Task, type RawTaskRow } from './data-parser';
 
 describe('CSV Parser', () => {
   const sampleTasks: Task[] = [
