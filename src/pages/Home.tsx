@@ -1,9 +1,11 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { parseTasks, parseCSV, exportToCSV } from "@/lib/data-parser";
 import type { Section, Task, RawTaskRow } from "@/lib/data-parser";
+import { loadConfirmationsFromSqlite, saveConfirmationsToSqlite } from "@/lib/sqlite";
 import { TaskCard } from "@/components/TaskCard";
 import { ActivityHeatmap } from "@/components/ActivityHeatmap";
 import { TrainingDimensionsChart } from "@/components/TrainingDimensionsChart";
+import { useSync } from "@/hooks/use-sync";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -121,6 +123,14 @@ export default function Home() {
     };
     setConfirmations(newState);
     localStorage.setItem("training-confirmations", JSON.stringify(newState));
+    if (user?.id) {
+      saveConfirmationsToSqlite(user.id, newState);
+    }
+    
+    // Sync to cloud
+    if (isConfigured) {
+      saveToCloud(newState);
+    }
     
     if (checked) {
       toast.success("任务状态已更新", {
@@ -248,8 +258,38 @@ export default function Home() {
   }, [enabledSections, confirmations, searchQuery, activeTab]);
 
   const { logout, user } = useAuth();
+  const { isSyncing, lastSynced, saveToCloud, loadFromCloud, isConfigured } = useSync(user?.id, confirmations);
   const employeeName = user?.name || (rawMeta as any)["员工"] || "学员";
   const position = (rawMeta as any)["岗位"] || "岗位未知";
+  
+  useEffect(() => {
+    if (user?.id) {
+      loadConfirmationsFromSqlite(user.id).then((sqlData) => {
+        if (sqlData) {
+          setConfirmations(prev => {
+            const merged = { ...prev, ...sqlData };
+            localStorage.setItem("training-confirmations", JSON.stringify(merged));
+            return merged;
+          });
+        }
+      }).catch(() => {});
+    }
+  }, [user?.id]);
+  
+  useEffect(() => {
+    if (user?.id && isConfigured) {
+      loadFromCloud().then((cloudData) => {
+        if (cloudData) {
+          setConfirmations(prev => {
+            const merged = { ...prev, ...cloudData };
+            localStorage.setItem("training-confirmations", JSON.stringify(merged));
+            return merged;
+          });
+          toast.success("云端数据已同步");
+        }
+      });
+    }
+  }, [user?.id, isConfigured]);
 
   // --- Heatmap Data ---
   const heatmapData = useMemo(() => {
